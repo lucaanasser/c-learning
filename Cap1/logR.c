@@ -12,11 +12,11 @@ int SomaDigito(int n){
 
 }
 
-void main() {
+int main() {
     srand(time(NULL));
     int n = rand() % 10001;
    
     int soma = SomaDigito(n);
     printf ("\nO número é: %d e a função piso de seu log na base 2 é: %d", n, soma);
-
+  return 0;
 }
