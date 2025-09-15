@@ -18,5 +18,5 @@ int main() {
    
     int soma = SomaDigito(n);
     printf ("\nO número é: %d e a função piso de seu log na base 2 é: %d", n, soma);
-  return 0;
+  return 1;
 }
