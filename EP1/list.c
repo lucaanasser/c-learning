@@ -30,7 +30,7 @@ LinkedList* create_list() {
 }
 
 int first_node(LinkedList *L) {
-    return (L->head == NULL) ? -1 : L->head->data;
+    return(L->head == NULL) ? -1 : L->head->data;
 }
 
 int list_is_empty(LinkedList *L) {
@@ -41,11 +41,14 @@ void insert_node(LinkedList *L, int data) {
     List *insert = add_node(data);
     insert->next = L->head;
     L->head = insert;
+    if(L->tail == NULL) {
+        L->tail = insert;
+    }
 }
 
 void append_node(LinkedList *L, int data){
     List *append = add_node(data);
-    if(L->head == NULL){
+    if(L->head == NULL) {
         L->head = append;
         L->tail = append;
     } else {
@@ -58,26 +61,28 @@ int delete_first_node(LinkedList *L) {
     if(L->head == NULL) {
         return -1;
     }
+
     int show_first = L->head->data;
     List *temp = L->head;
     L->head = L->head->next;
-    if(L->head == NULL){
+    if(L->head == NULL) {
       L->tail = NULL;
     }
+
     free(temp);
     return show_first;
 }
 
 void print_list(LinkedList *L) {
     List *aux = L->head;
-    while (aux != NULL) {
+    while(aux != NULL) {
         printf("%d, ", aux->data);
         aux = aux->next;
     }
     printf("\n");
 }
 
-int main() {
+/*int main() {
     LinkedList *head = create_list();
 
     printf("%d \n", first_node(head)); 
@@ -90,8 +95,8 @@ int main() {
 
     print_list(head);
     
-    printf("Deleted: %d\n", delete_first_node(head)); 
+    printf("numero deletado: %d\n", delete_first_node(head)); 
     print_list(head);
 
     return 0;
-}
+}*/

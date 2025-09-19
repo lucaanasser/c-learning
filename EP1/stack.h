@@ -4,7 +4,8 @@
 #include "list.h"
 
 typedef struct Stack {
-    /* PREENCHA */
+    int data;
+    struct Stack *next; 
 } Stack;
 
 Stack*  create_stack();

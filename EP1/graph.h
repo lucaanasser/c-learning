@@ -5,7 +5,8 @@
 #include "stack.h"
 
 typedef struct Graph {
-    /* PREENCHA */
+    Queue *graph_1;
+    Stack *graph_2;
 } Graph;
 
 Graph*  create_graph(int n, int tipo);
