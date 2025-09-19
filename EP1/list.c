@@ -33,6 +33,7 @@ List* append(List *ptr, int data){
 }
 
 int exclude_node(List *ptr, int data){
+  
 }
 
 bool empty_list(list L){
