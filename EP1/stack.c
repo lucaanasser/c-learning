@@ -5,7 +5,7 @@ typedef struct Stack {
 Stack* create_stack(){
   
 }
-void	push(Stack *S, int novo_valor){
+void push(Stack *S, int novo_valor){
   
 }
 
