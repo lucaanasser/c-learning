@@ -26,7 +26,8 @@ int list_is_empty(LinkedList *L);
 void insert_node(LinkedList *L, int data);
 void append_node(LinkedList *L, int data);
 int delete_first_node(LinkedList *L);
-
+int remove_node_with_value(LinkedList *L, int value);
+int search_node_with_value(LinkedList *L, int value);
 
 void print_list(LinkedList *L);
 

@@ -34,7 +34,7 @@ int first_node(LinkedList *L) {
 }
 
 int list_is_empty(LinkedList *L) {
-    return (L->head == NULL) ? 1 : 0;
+    return first_node(L) == -1;
 }
 
 void insert_node(LinkedList *L, int data) {
@@ -47,11 +47,10 @@ void insert_node(LinkedList *L, int data) {
 }
 
 void append_node(LinkedList *L, int data){
-    List *append = add_node(data);
     if(L->head == NULL) {
-        L->head = append;
-        L->tail = append;
+        insert_node(L, data);  
     } else {
+        List *append = add_node(data);
         L->tail->next = append;
         L->tail = append;
     }
@@ -71,6 +70,46 @@ int delete_first_node(LinkedList *L) {
 
     free(temp);
     return show_first;
+}
+
+int delete_node_with_value(LinkedList *L, int value) {
+    if (L->head == NULL){
+      return -1;
+    } 
+    if (L->head->data == value) {
+        return delete_first_node(L);
+    }
+    
+    List *aux = L->head;
+    while (aux->next != NULL) {
+        if (aux->next->data == value) {
+            List *node_to_delete = aux->next;
+            aux->next = node_to_delete->next;
+            if (node_to_delete == L->tail) {
+                L->tail = aux;
+            }
+            free(node_to_delete);
+            return value;
+        }
+        aux = aux->next;
+    }
+    return -1;
+}
+
+int search_node_with_value(LinkedList *L, int value){
+    if(L == NULL){
+      return -1;
+    }
+    
+    List *aux = L->head;
+    while(aux != NULL) {
+      if(aux->data == value) {
+        return value; 
+      }
+      aux = aux->next;
+    }
+    
+    return -1;
 }
 
 void print_list(LinkedList *L) {
