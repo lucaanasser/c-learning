@@ -65,7 +65,7 @@ int remove_edge_0(Graph *G, int u, int v) {
 }
 
 int* bfs_0(Graph *G, int u, int *dist_list) {
-  Queue *dist_queue = creat_queue();
+  Queue *dist_queue = create_queue();
   dist_list[u] = 0;
   enqueue(dist_queue, u);
   
@@ -82,6 +82,32 @@ int* bfs_0(Graph *G, int u, int *dist_list) {
     }
   }
   return dist_list;
+}
+
+int* dfs_0(Graph *G, int u, int *pred_list) {
+  Queue *pred_stack = create_stack();
+  push(pred_stack, u);
+  pred_stack[u] = -2;
+  
+  while(queue_is_empty(pred_stack) != 1) { 
+    int vert = pop(pred_stack);
+    List *is_next = G->adj_list[vert]->head;
+    
+    while(is_next != NULL) {
+        if(pred_list[is_next->data] == -1) {
+          pred_list[is_next->data] = vert;
+          push(pred_stack, is_next->data);
+        }
+      is_next = is_next->next;
+    }
+  }
+  pred_stack[u] = -1;
+  return pred_list;
+}
+
+
+is_connected_1(Graph *G) {
+  
 }
   
 
@@ -119,7 +145,7 @@ int remove_edge_1(Graph *G, int u, int v) {
 }
 
 int* bfs_1(Graph *G, int u, int *dist_list) {
-  Queue *dist_queue = creat_queue();
+  Queue *dist_queue = create_queue();
   dist_list[u] = 0;
   enqueue(dist_queue, u);
 
@@ -139,6 +165,29 @@ int* bfs_1(Graph *G, int u, int *dist_list) {
   return dist_list;
 }
 
+int* dfs_1(Graph *G, int u, int *pred_list) {
+  Queue *pred_stack = create_stack();
+  push(pred_stack, u);
+
+  while(queue_is_empty(pred_stack) != 1) { 
+    int vert = pop(pred_stack);
+    
+    for(int i = 0; i < G->vert_num; i++) {
+      if(G->adj_matrix[vert][i] == 1 ) {
+        if(pred_list[i] == -1){
+          pred_list[i] = vert;
+          push(pred_stack, i);
+        }
+      }
+    }
+  }
+  
+  return pred_list;
+}
+
+is_connected_1(Graph *G) {
+  
+}
 
 // Funcoes obrigatorias 
 Graph* create_graph(int n, int tipo) {
@@ -183,8 +232,18 @@ int* dfs(Graph *G, int u) {
   if (check(G, &u, NULL) == 0){
     return NULL;
   }
+  int *pre_list = malloc((G->vert_num) * sizeof(int));
+  for(int i = 0; i < G->vert_num; i++){
+    pred_list[i] = -1;
+  }
+  
+  return (G->type == 1) ? dfs_1(G, u, pred_list) : dfs_0(G, u, pred_list);
 }
 
 int is_connected(Graph *G) {
+  if (G == NULL){
+    return 0;
+  }
   
+  return (G->type == 1) ? is_connected_1(G) : is_connected_0(G);
 }
