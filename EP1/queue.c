@@ -1,8 +1,6 @@
 #include "list.h"
+#include "queue.h"
 
-typedef struct Queue {
-    LinkedList *queue;
-} Queue;
 
 Queue* create_queue() {
   Queue *new_queue = malloc(sizeof(Queue));
@@ -28,37 +26,3 @@ int queue_is_empty(Queue *Q) {
   int is_empty = list_is_empty(Q->queue);
   return is_empty;
 }
-
-
-
-void print_queue(Queue *Q) {
-  print_list(Q->queue);
-}
-
-
-/*int main(){
-
-    Queue *head = create_queue();
-    
-    int is_empty = queue_is_empty(head);
-    printf("%d \n", is_empty);  
-
-    enqueue(head, 10);
-    enqueue(head, 20);
-    enqueue(head, 30);
-
-    is_empty = queue_is_empty(head);
-    printf("%d \n", is_empty);  
-
-    int var_front = front(head);
-    printf("%d \n", var_front);
-
-    int var_dequeue = dequeue(head);
-    printf("%d \n", var_dequeue);
-    
-    var_front = front(head);
-    printf("%d \n", var_front);
-
-    print_queue(head);
-
-}*/

@@ -1,16 +1,4 @@
-#include <stdio.h>
-#include <stdlib.h>
-
-typedef struct List{ 
-    int data;
-    struct List *next;
-} List;
-
-// decidi criar esse typedef para manter o append_node O(1) e ao mesmo tempo como void.
-typedef struct LinkedList {
-    List *head;
-    List *tail;
-} LinkedList;
+#include "list.h"
 
 List* add_node(int data) {
     List *new_node = malloc(sizeof(List));
@@ -112,30 +100,3 @@ int search_node_with_value(LinkedList *L, int value){
     return -1;
 }
 
-void print_list(LinkedList *L) {
-    List *aux = L->head;
-    while(aux != NULL) {
-        printf("%d, ", aux->data);
-        aux = aux->next;
-    }
-    printf("\n");
-}
-
-/*int main() {
-    LinkedList *head = create_list();
-
-    printf("%d \n", first_node(head)); 
-    printf("%d \n", list_is_empty(head)); 
-
-    insert_node(head, 20);
-    insert_node(head, 10);
-    append_node(head, 30);
-    append_node(head, 40);
-
-    print_list(head);
-    
-    printf("numero deletado: %d\n", delete_first_node(head)); 
-    print_list(head);
-
-    return 0;
-}*/

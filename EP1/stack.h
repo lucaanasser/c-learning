@@ -4,12 +4,11 @@
 #include "list.h"
 
 typedef struct Stack {
-    int data;
-    struct Stack *next; 
+    LinkedList *stack;
 } Stack;
 
 Stack*  create_stack();
-void	  push(Stack *S, int novo_valor);
+void	push(Stack *S, int novo_valor);
 int	    pop(Stack *S);
 int	    top(Stack *S);
 int     stack_is_empty(Stack *S);

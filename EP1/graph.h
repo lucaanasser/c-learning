@@ -5,8 +5,12 @@
 #include "stack.h"
 
 typedef struct Graph {
-    Queue *graph_1;
-    Stack *graph_2;
+  int vert_num;
+  int type;
+  union {
+    LinkedList **adj_list;
+    int **adj_matrix;
+  };
 } Graph;
 
 Graph*  create_graph(int n, int tipo);
@@ -15,5 +19,6 @@ int     remove_edge(Graph *G, int u, int v);
 int*    bfs(Graph *G, int u);
 int*    dfs(Graph *G, int u);
 int     is_connected(Graph *G);
+
 
 #endif

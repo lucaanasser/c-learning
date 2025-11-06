@@ -1,14 +1,6 @@
-#include "queue.h"
-#include "stack.h"
+#include "graph.h"
 
-typedef struct Graph {
-  int vert_num;
-  int type;
-  union {
-  LinkedList **adj_list;
-  int **adj_matrix;
-  };
-} Graph;
+
 
 // Funcoes auxiliares gerais
 int check(Graph *G, int *u, int *v) {
@@ -27,6 +19,14 @@ int check(Graph *G, int *u, int *v) {
       return 0;
     }
     return 1;
+}
+
+int* create_neg1_array(int size) {
+    int *array = malloc(size * sizeof(int));
+    for(int i = 0; i < size; i++){
+        array[i] = -1;
+    }
+    return array;
 }
 
 
@@ -64,7 +64,8 @@ int remove_edge_0(Graph *G, int u, int v) {
   return 1;
 }
 
-int* bfs_0(Graph *G, int u, int *dist_list) {
+int* bfs_0(Graph *G, int u) {
+  int *dist_list = create_neg1_array(G->vert_num);
   Queue *dist_queue = create_queue();
   dist_list[u] = 0;
   enqueue(dist_queue, u);
@@ -84,12 +85,13 @@ int* bfs_0(Graph *G, int u, int *dist_list) {
   return dist_list;
 }
 
-int* dfs_0(Graph *G, int u, int *pred_list) {
-  Queue *pred_stack = create_stack();
+int* dfs_0(Graph *G, int u) {
+  int *pred_list = create_neg1_array(G->vert_num);
+  Stack *pred_stack = create_stack();
   push(pred_stack, u);
-  pred_stack[u] = -2;
+  pred_list[u] = -2;
   
-  while(queue_is_empty(pred_stack) != 1) { 
+  while(stack_is_empty(pred_stack) != 1) { 
     int vert = pop(pred_stack);
     List *is_next = G->adj_list[vert]->head;
     
@@ -101,13 +103,21 @@ int* dfs_0(Graph *G, int u, int *pred_list) {
       is_next = is_next->next;
     }
   }
-  pred_stack[u] = -1;
+  pred_list[u] = -1;
   return pred_list;
 }
 
 
-is_connected_1(Graph *G) {
-  
+int is_connected_0(Graph *G) {
+  int *dist = bfs_0(G, 0);
+  for(int i = 0; i < G->vert_num; i++) {
+    if(dist[i] == -1) {
+      free(dist);
+      return 0;
+    }
+  }
+  free(dist);
+  return 1;
 }
   
 
@@ -144,7 +154,8 @@ int remove_edge_1(Graph *G, int u, int v) {
   return 1;
 }
 
-int* bfs_1(Graph *G, int u, int *dist_list) {
+int* bfs_1(Graph *G, int u) {
+  int *dist_list = create_neg1_array(G->vert_num);
   Queue *dist_queue = create_queue();
   dist_list[u] = 0;
   enqueue(dist_queue, u);
@@ -165,11 +176,12 @@ int* bfs_1(Graph *G, int u, int *dist_list) {
   return dist_list;
 }
 
-int* dfs_1(Graph *G, int u, int *pred_list) {
-  Queue *pred_stack = create_stack();
+int* dfs_1(Graph *G, int u) {
+  int *pred_list = create_neg1_array(G->vert_num);
+  Stack *pred_stack = create_stack();
   push(pred_stack, u);
 
-  while(queue_is_empty(pred_stack) != 1) { 
+  while(stack_is_empty(pred_stack) != 1) { 
     int vert = pop(pred_stack);
     
     for(int i = 0; i < G->vert_num; i++) {
@@ -185,8 +197,16 @@ int* dfs_1(Graph *G, int u, int *pred_list) {
   return pred_list;
 }
 
-is_connected_1(Graph *G) {
-  
+int is_connected_1(Graph *G) {
+  int *dist = bfs_1(G, 0);
+  for(int i = 0; i < G->vert_num; i++) {
+    if(dist[i] == -1) {
+      free(dist);
+      return 0;
+    }
+  }
+  free(dist);
+  return 1;
 }
 
 // Funcoes obrigatorias 
@@ -220,24 +240,16 @@ int* bfs(Graph *G, int u) {
   if (check(G, &u, NULL) == 0){
     return NULL;
   }
-  int *dist_list = malloc((G->vert_num) * sizeof(int));
-  for(int i = 0; i < G->vert_num; i++){
-    dist_list[i] = -1;
-  }
   
-  return (G->type == 1) ? bfs_1(G, u, dist_list) : bfs_0(G, u, dist_list);
+  return (G->type == 1) ? bfs_1(G, u) : bfs_0(G, u);
 }
 
 int* dfs(Graph *G, int u) {
   if (check(G, &u, NULL) == 0){
     return NULL;
   }
-  int *pre_list = malloc((G->vert_num) * sizeof(int));
-  for(int i = 0; i < G->vert_num; i++){
-    pred_list[i] = -1;
-  }
   
-  return (G->type == 1) ? dfs_1(G, u, pred_list) : dfs_0(G, u, pred_list);
+  return (G->type == 1) ? dfs_1(G, u) : dfs_0(G, u);
 }
 
 int is_connected(Graph *G) {
@@ -247,3 +259,4 @@ int is_connected(Graph *G) {
   
   return (G->type == 1) ? is_connected_1(G) : is_connected_0(G);
 }
+
