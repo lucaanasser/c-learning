@@ -1,19 +1,13 @@
-#include <stdio.h>
-#include <stdlib.h>
+#include "heap.h"
 
-
-typedef struct Heap {
-    int *data;      
-    int size;     
-    int capacity;  
-} Heap;
-
-
-Heap* create_heap(int capacity) {
+Heap* create_heap(int capacity, HeapType type) {
     Heap *new_heap = malloc(sizeof(Heap));
-    new_heap->data = malloc(sizeof(int) * capacity);
+    if (new_heap == NULL) return NULL;
+
+    new_heap->data = NULL;
     new_heap->size = 0;
     new_heap->capacity = capacity;
+    new_heap->type = type;
 
     return new_heap;
 }
@@ -33,36 +27,91 @@ int return_right_child(int i) {
     return (2 * i) + 2;  
 }
 
- void change_positions(int array[], int i, int j) {
+void change_positions(int array[], int i, int j) {
     int temp = array[i];
     array[i] = array[j]; 
     array[j] = temp;
 }
 
-
-Heap* heapify_down(Heap *heap, int i) {
+Heap* heapify_down(Heap *heap, int i, HeapType type) {
     int l = return_left_child(i);
     int r = return_right_child(i);
-    int largest = i;
+    int key = i;
 
-    if(l <= heap->size - 1 && heap->data[l] > heap->data[largest]) {
-        largest = l;
-    } 
+    if(type == max) {
+        if(l < heap->size && heap->data[l] > heap->data[key]) {
+            key = l;
+        } 
 
-    if(r <= heap->size - 1 && heap->data[r] > largest) {
-        largest = r;
+        if(r < heap->size && heap->data[r] > heap->data[key]) {
+            key = r;
+        }
+
+        if(key != i) {
+            change_positions(heap->data, i, key);
+            heapify_down(heap, key, type);
+        } 
+
+        return heap;
+    } else {
+        if(l < heap->size && heap->data[l] < heap->data[key]) {
+            key = l;
+        } 
+
+        if(r < heap->size && heap->data[r] < heap->data[key]) {
+            key = r;
+        }
+
+        if(key != i) {
+            change_positions(heap->data, i, key);
+            heapify_down(heap, key, type);
+        } 
+
+        return heap;
+    }
+}
+
+Heap* build_heap(int *array, int size, HeapType type) {
+    if(type == max) {
+        Heap *heap = create_heap(size, type);
+        heap->size = size;
+        heap->data = array;
+
+        for(int i = (size/2) - 1; i >= 0; i--) {
+            heapify_down(heap, i, type);
+        }
+        
+        return heap;
+    } else {
+        Heap *heap = create_heap(size, type);
+        heap->size = size;
+        heap->data = array;
+
+        for(int i = (size/2) - 1; i >= 0; i--) {
+            heapify_down(heap, i, type);
+        }
+        
+        return heap;
+    }
+}
+
+void heap_sort(int *array, int size) {
+    HeapType type = max;
+    Heap *heap = build_heap(array, size, type);
+    
+    for (int i = size - 1; i > 0; i--) {
+        change_positions(heap->data, 0, i);
+        heap->size--;
+        heapify_down(heap, 0, type);
     }
 
-    if(largest != i) {
-        change_positions(heap->data, i, largest);
-        heapify_down(heap, largest);
-    } 
 
-    return heap;
-
+    free(heap);
 }
 
 
+
+/*
 Heap* heapify_up(Heap *heap, int i) {
     int p = return_parent(i);
 
@@ -96,41 +145,21 @@ Heap* end_insert(Heap *heap, int value) {
     return heap;
 }
 
-void replace_max(Heap *heap) {
+int remove_max(Heap *heap) {
    int max_value = heap->data[0];
    heap->data[0] = heap->[heap->size];
-   heap->data[heap->size] = max_value;
    heap->size--;
+   heapify_down(heap, 0);
+
+   return max_value;
 }
 
-Heap* build_heap(int array[], int size) {
-    Heap *heap = create_heap(size);
-    heap->size = size;   
-    for(int i = 0; i < size; i++) {
-        heap->data[i] = array[i];
-    }
+*/
 
 
-    for(int i = (size/2) - 1; i >= 0; i--) {
-        heapify_down(heap, i);
-    }
-    
-    return heap;
-}
 
 
-Heap* heap_sort(Heap *heap) {
-    for (int i = 0; i < heap->size; i++) {
-        replace_max(heap);
-        heapify_down(heap->data, 0);
-    }
-
-    return heap;
-}
 
 
-int main(void) {
-    create_heap(1);
-}
 
 
