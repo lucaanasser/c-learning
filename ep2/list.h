@@ -4,10 +4,13 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-
+typedef struct Edge {
+    int vert;
+    int value;
+} Edge;
 
 typedef struct List{ 
-    int data;
+    Edge data;
     struct List *next;
 } List;
 

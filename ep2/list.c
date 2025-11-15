@@ -7,9 +7,6 @@ List* add_node(int data) {
     return new_node;
 }
 
-
-
-
 LinkedList* create_list() {
     LinkedList *L = malloc(sizeof(LinkedList));
     L->head = NULL;
