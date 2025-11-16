@@ -1,52 +1,120 @@
 #include "list.h"
 
-List* add_node(int data) {
-    List *new_node = malloc(sizeof(List));
-    new_node->data = data;
-    new_node->next = NULL;
-    return new_node;
+int is_null(LinkedList *L) {
+
+    return (L == NULL);
+}
+
+int is_empty(LinkedList *L) {
+
+    return (is_null(L) || L->head == NULL);
+}
+
+void free_list(LinkedList *L) {
+    if (is_null(L)) return;
+
+    List *current = L->head;
+    while (current != NULL) {
+        List *temp = current;
+        current = current->next;
+        free(temp);
+    }
+
+    free(L);
+}
+
+Edge first_node(LinkedList *L) {
+    
+    return(is_empty(L)) ? (Edge){-1, -1} : L->head->data;
 }
 
 LinkedList* create_list() {
     LinkedList *L = malloc(sizeof(LinkedList));
+    if (is_null(L)) return NULL;
+    
     L->head = NULL;
     L->tail = NULL;
+
     return L;
 }
 
-int first_node(LinkedList *L) {
-    return(L->head == NULL) ? -1 : L->head->data;
+List* add_node(int vert, int value) {
+    List *new_node = malloc(sizeof(List));
+    if (is_null(new_node)) return NULL;
+
+    new_node->data.vert = vert;
+    new_node->data.value = value;
+    new_node->next = NULL;
+    
+    return new_node;
 }
 
-int list_is_empty(LinkedList *L) {
-    return first_node(L) == -1;
-}
+Status insert_node(LinkedList *L, int vert, int value) {
+    if (is_null(L)) return error;
+    
+    List *insert = add_node(vert, value);
+    if (is_null(insert)) return error;
 
-void insert_node(LinkedList *L, int data) {
-    List *insert = add_node(data);
     insert->next = L->head;
     L->head = insert;
+
     if(L->tail == NULL) {
         L->tail = insert;
     }
+
+    return success;
 }
 
-void append_node(LinkedList *L, int data){
+Status append_node(LinkedList *L, int vert, int value) {
+    if (is_null(L)) return error;
+    
     if(L->head == NULL) {
-        insert_node(L, data);  
-    } else {
-        List *append = add_node(data);
-        L->tail->next = append;
-        L->tail = append;
+        insert_node(L, vert, value);
+
+        return success;
     }
+
+    List *append = add_node(vert, value);
+    if (is_null(append)) return error;
+
+    L->tail->next = append;
+    L->tail = append;
+        
+    return success;
 }
 
-int delete_first_node(LinkedList *L) {
-    if(L->head == NULL) {
-        return -1;
+Status insert_sorted(LinkedList *L, int vert, int value) {
+    if (is_null(L)) return error;
+
+    if (L->head == NULL || L->head->data.value >= value) {
+        insert_node(L, vert, value);
+
+        return success;
     }
 
-    int show_first = L->head->data;
+    List *new_node = add_node(vert, value);
+    if (is_null(new_node)) return error;
+
+    List *current = L->head;
+    while (current->next != NULL && current->next->data.value < value) {
+        current = current->next;
+    }
+    
+    new_node->next = current->next;
+    current->next = new_node;
+    
+    if (new_node->next == NULL) {
+        L->tail = new_node;
+    }
+
+    return success;
+}
+
+Edge delete_first_node(LinkedList *L) {
+    if(is_null(L) || is_empty(L)) return (Edge){-1, -1};
+
+    Edge show_first = first_node(L);
+
     List *temp = L->head;
     L->head = L->head->next;
     if(L->head == NULL) {
@@ -54,46 +122,72 @@ int delete_first_node(LinkedList *L) {
     }
 
     free(temp);
+
     return show_first;
 }
 
-int delete_node_with_value(LinkedList *L, int value) {
-    if (L->head == NULL){
-      return -1;
-    } 
-    if (L->head->data == value) {
-        return delete_first_node(L);
-    }
-    
+Edge delete_node_with(LinkedList *L, int target, int with_vert) {
+    if (is_null(L) || is_empty(L)) return (Edge){-1, -1};
+
+    if ((with_vert && L->head->data.vert == target) || 
+        (!with_vert && L->head->data.value == target)) return delete_first_node(L);
+
     List *aux = L->head;
     while (aux->next != NULL) {
-        if (aux->next->data == value) {
+        int match = (with_vert && aux->next->data.vert == target) || 
+            (!with_vert && aux->next->data.value == target);
+        
+        if (match) {
             List *node_to_delete = aux->next;
+            Edge deleted_data = node_to_delete->data;
+            
             aux->next = node_to_delete->next;
             if (node_to_delete == L->tail) {
                 L->tail = aux;
             }
+            
             free(node_to_delete);
-            return value;
+
+            return deleted_data;
         }
+
         aux = aux->next;
     }
-    return -1;
+
+    return (Edge){-1, -1};
 }
 
-int search_node_with_value(LinkedList *L, int value){
-    if(L == NULL){
-      return -1;
-    }
+Edge delete_node_with_vert(LinkedList *L, int vert) {
+
+    return delete_node_with(L, vert, 1);
+}
+
+Edge delete_node_with_value(LinkedList *L, int value) {
+
+    return delete_node_with(L, value, 0);
+}
+
+int search_node_with(LinkedList *L, int target, int with_vert) {
+    if(is_null(L)) return -1;
     
     List *aux = L->head;
     while(aux != NULL) {
-      if(aux->data == value) {
-        return value; 
-      }
-      aux = aux->next;
+        if ((with_vert && aux->data.vert == target) || 
+            (!with_vert && aux->data.value == target)) return target;
+
+        aux = aux->next;
     }
     
     return -1;
+}
+
+int search_node_with_vert(LinkedList *L, int vert) {
+
+    return search_node_with(L, vert, 1);
+}
+
+int search_node_with_value(LinkedList *L, int value) {
+
+    return search_node_with(L, value, 0);
 }
 
