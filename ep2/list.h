@@ -24,24 +24,27 @@ typedef struct LinkedList {
     List *tail;
 } LinkedList;
 
-LinkedList* create_list();
 
-int is_empty(LinkedList *L);
-int is_null(LinkedList *L);
 void free_list(LinkedList *L);
-Edge first_node(LinkedList *L);                    
 
-Status insert_node(LinkedList *L, int vert, int value); 
-Status append_node(LinkedList *L, int vert, int value);
-Status insert_sorted(LinkedList *L, int vert, int value);
+int list_is_empty(LinkedList *L);
+int list_is_null(LinkedList *L);
 
-Edge delete_first_node(LinkedList *L);
-Edge delete_node_with_vert(LinkedList *L, int vert);
-Edge delete_node_with_value(LinkedList *L, int value);
+Edge list_return_min(LinkedList *L);      
 
-int search_node_with_vert(LinkedList *L, int vert);
-int search_node_with_value(LinkedList *L, int value);
+LinkedList* create_list();              
 
+Status list_insert_node(LinkedList *L, Edge data);
+Status list_insert_sorted(LinkedList *L, Edge data);
+
+Edge list_remove_min(LinkedList *L);
+Edge list_remove_with_vert(LinkedList *L, int vert);
+Edge list_remove_with_value(LinkedList *L, int value);
+
+Status list_decrease_priority(LinkedList *L, int vert, int new_priority);
+
+int list_search_with_vert(LinkedList *L, int vert);
+int list_search_with_value(LinkedList *L, int value);
 
 
 #endif
