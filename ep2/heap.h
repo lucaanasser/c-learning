@@ -33,6 +33,8 @@ int heap_is_full(Heap *heap);
 Heap* create_max_heap(int *array, int size);
 
 void heap_sort(int *array, int size);
+Status swap_positions(Heap *heap, int i, int j);
+Status heapify_down(Heap *heap, int i);
 
 // Dijkstra Heap
 Heap* create_min_heap(int vert_num);

@@ -46,7 +46,7 @@ static int return_right_child(int i) {
     return (2 * i) + 2;  
 }
 
-static Status swap_positions(Heap *heap, int i, int j) {
+Status swap_positions(Heap *heap, int i, int j) {
     if(heap_is_empty(heap)) return error;
     if(i >= heap->size || j >= heap->size) return error;
     
@@ -76,7 +76,7 @@ static int compare_priority(Heap *heap, int i, int j) {
     }
 }
 
-static Status heapify_down(Heap *heap, int i) {
+Status heapify_down(Heap *heap, int i) {
     if(heap_is_empty(heap)) return error;
     if(i >= heap->size) return error;
 
@@ -132,22 +132,7 @@ Heap* create_max_heap(int *array, int size) {
     return heap;
 }
 
-void heap_sort(int *array, int n) {
-    if (array == NULL || n <= 0) return;
-    Heap *heap = create_max_heap(array, n);
-    
-    for (int i = n - 1; i > 0; i--) {
-        swap_positions(heap, 0, i);
-        heap->size--;
-        heapify_down(heap, 0);
-    }
-
-    free(heap);
-}
-
-
 // Funções para o Algoritmo de Dijkstra 
-
 
 Heap* create_min_heap(int vert_num) {
     Heap *heap = malloc(sizeof(Heap));
@@ -155,7 +140,7 @@ Heap* create_min_heap(int vert_num) {
 
     heap->type = min_heap;
     heap->capacity = vert_num;
-    heap->size = vert_num;
+    heap->size = 0;
         
     heap->nodes = malloc(vert_num * sizeof(Edge));
     heap->vert_index = malloc(vert_num * sizeof(int));
@@ -168,13 +153,7 @@ Heap* create_min_heap(int vert_num) {
     }
 
     for (int i = 0; i < vert_num; i++) {
-        heap->nodes[i].vert = i;
-        heap->nodes[i].value = INF;  
-        heap->vert_index[i] = i;
-    }
-
-    for(int i = vert_num / 2 - 1; i >= 0; i--) {
-        heapify_down(heap, i);
+        heap->vert_index[i] = -1;
     }
 
     return heap;
