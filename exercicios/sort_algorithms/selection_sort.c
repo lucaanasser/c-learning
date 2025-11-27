@@ -25,7 +25,7 @@ void recursive_selection_sort(int *A, int lenght) {
     return;
   }
 
-  recursive_selection_sort(A, lenght, 0);
+  selection_sort_aux(A, lenght, 0);
 }
 
 void selection_sort_aux(int *A, int lenght, int start) {
