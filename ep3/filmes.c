@@ -88,7 +88,21 @@ crieListaFilmes()
 void
 libereListaFilmes(ListaFilmes *lst)
 {
-    AVISO(libereListaFilmes em filmes.c: Vixe! Ainda nao fiz essa funcao...);
+    if(lst == NULL) return;
+    
+    Filme *cab = lst->cab;
+    Filme *atual = cab->prox;
+    Filme *prox;
+
+    while (atual != cab) {
+        prox = atual->prox;
+        libereFilme(atual);
+        atual = prox;
+    }
+
+    free(cab);
+
+    free(lst);
 }
 
 /*----------------------------------------------------------------------
@@ -101,7 +115,10 @@ libereListaFilmes(ListaFilmes *lst)
 void 
 libereFilme(Filme *flm)
 {
-    AVISO(libereFilme em filmes.c: Vixe! Ainda nao fiz essa funcao...);
+    if(flm == NULL) return;
+
+    free(flm->nome);
+    free(flm);
 }
 
 /*----------------------------------------------------------------------
