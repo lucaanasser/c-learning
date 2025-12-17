@@ -15,7 +15,7 @@
 /*----------------------------------------------------------------------
  *  crieFilme
  *
- *  Recebe informacoes dobre um filme 
+ *  Recebe informacoes sobre um filme 
  *
  *      - DIST  : distribuicao de notas
  *      - VOTOS : numero de votos
@@ -60,8 +60,20 @@ crieFilme (char dist[], int votos, float nota, char *nome, int ano)
 ListaFilmes *
 crieListaFilmes()
 {
-    AVISO(crieListaFilmes em filmes.c: Vixe! Ainda nao fiz essa funcao ...); 
-    return NULL;
+    ListaFilmes *nova_lista = malloc(sizeof(ListaFilmes)); 
+    if(nova_lista == NULL) return NULL;
+    
+    Filme *cab = malloc(sizeof(Filme));
+    if(cab == NULL) {
+        free(nova_lista);
+        return NULL;
+    }
+
+    cab->prox = cab;
+    cab->ant = cab;
+    nova_lista->cab = cab;
+
+    return nova_lista;
 }
 
 /*----------------------------------------------------------------------
