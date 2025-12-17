@@ -172,8 +172,21 @@ insiraFilme(ListaFilmes *lst, Filme *flm)
 Bool 
 contemFilme(ListaFilmes *lst, Filme *flm)
 {
-    AVISO(contemFilme em filme.c: Vixe! Ainda nao fiz essa funcao...);
+    if (lst == NULL || flm == NULL) return FALSE;
+ 
+    Filme *cab = lst->cab;
+    Filme *atual = cab->prox;
+
+    while (atual != cab) {
+        if (strcmp(atual->nome, flm->nome) == 0 && atual->nota == flm->nota && atual->ano == flm->ano) {
+            return TRUE;
+        } 
+
+        atual = atual->prox;
+    }
+
     return FALSE;
+
 }
 
 /*----------------------------------------------------------------------
