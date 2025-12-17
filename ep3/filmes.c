@@ -134,7 +134,17 @@ libereFilme(Filme *flm)
 void 
 insiraFilme(ListaFilmes *lst, Filme *flm)
 {
-    AVISO(insiraFilme em filmes.c: Vixe! Ainda nao fiz essa funcao...);
+    if (lst == NULL || flm == NULL) return;
+
+    Filme *cab = lst->cab;
+    Filme *ultimo = cab->ant;
+
+    flm->prox = cab; 
+    flm->ant = ultimo;
+    ultimo->prox = flm;
+    cab->ant = flm;
+
+    lst->nFilmes++;
 }
 
 
