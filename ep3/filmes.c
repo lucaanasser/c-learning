@@ -178,7 +178,7 @@ contemFilme(ListaFilmes *lst, Filme *flm)
     Filme *atual = cab->prox;
 
     while (atual != cab) {
-        if (strcmp(atual->nome, flm->nome) == 0 && atual->nota == flm->nota && atual->ano == flm->ano) {
+        if (strCmp(atual->nome, flm->nome) == 0 && atual->nota == flm->nota && atual->ano == flm->ano) {
             return TRUE;
         } 
 
@@ -186,7 +186,6 @@ contemFilme(ListaFilmes *lst, Filme *flm)
     }
 
     return FALSE;
-
 }
 
 /*----------------------------------------------------------------------
@@ -200,7 +199,14 @@ contemFilme(ListaFilmes *lst, Filme *flm)
 void 
 removaFilme(ListaFilmes *lst, Filme *flm)
 {
-    AVISO(removaFilme em filmes.c: Vixe! Ainda nao fiz essa funcao...);
+    if (lst == NULL || flm == NULL) return;
+
+    flm->ant->prox = flm->prox;
+    flm->prox->ant = flm->ant;
+
+    libereFilme(flm);
+
+    lst->nFilmes--;
 }
 
 
