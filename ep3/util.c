@@ -35,8 +35,38 @@
 Bool
 achePalavra(unsigned char *pal, int tPal, unsigned char *texto, int tTex)
 {
-    AVISO(achePalavra em util.c: Vixe! Ainda nao fiz essa funcao...);
-    return FALSE;
+    if (pal == NULL || texto == NULL || tPal <= 0 || tTex <= 0) {
+        AVISO(achePalavra: os parametros usados estaao vazios ou invalidos);
+        return FALSE;
+    }
+
+    int CharErrado[256];
+
+    for (int i = 0; i < 256; i++) {
+        CharErrado[i] = tPal;
+    }
+
+    for (int i = 0; i < tPal - 1; i++) {
+        CharErrado [tolower(pal[i])] = tPal - 1 - i;
+    }
+
+    int i = 0;
+    while (i <= tTex - tPal) {
+        int j = tPal - 1;
+        while (j >= 0 && tolower(texto[i + j]) == tolower(pal[j])) {
+            j--;
+        }
+
+        if (j < 0) {
+            return TRUE;
+        }
+
+        i += CharErrado[tolower(texto[i + j])];
+
+        return FALSE;
+    }
+    
+    
 }
 
 /*----------------------------------------------------------------------
