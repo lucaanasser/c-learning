@@ -62,11 +62,9 @@ achePalavra(unsigned char *pal, int tPal, unsigned char *texto, int tTex)
         }
 
         i += CharErrado[tolower(texto[i + j])];
-
-        return FALSE;
     }
     
-    
+    return FALSE;  
 }
 
 /*----------------------------------------------------------------------
