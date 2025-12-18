@@ -253,9 +253,15 @@ removaFilme(ListaFilmes *lst, Filme *flm)
 void 
 mergeSortFilmes(ListaFilmes *lst)
 {
-    if (lst == NULL || lst->cab == NULL || lst->nFilmes <= 1)
+    if (lst == NULL || lst->cab == NULL || lst->nFilmes < 1) {
+        AVISO(mergeSortFilmes: lista de filmes vazia ou invalida);
         return;
-    
+    }
+    if (lst->nFilmes == 1){
+        printf("Lista de filmes ordenada por nome \n");
+        return;
+    }
+        
     Filme *cab = lst->cab;
     Filme *ultimo;
     
@@ -265,6 +271,8 @@ mergeSortFilmes(ListaFilmes *lst)
     primeiro->ant = cab;
     ultimo->prox = cab;
     cab->ant = ultimo;
+
+    printf("Lista de filmes ordenada por nome \n");
 }
 
 static Filme *
@@ -371,9 +379,15 @@ merge(Filme *esq, int nEsq, Filme *dir, int nDir, Filme **ultimo)
 void 
 quickSortFilmes(ListaFilmes *lst)
 {
-    if (lst == NULL || lst->cab == NULL || lst->nFilmes <= 1)
+    if (lst == NULL || lst->cab == NULL || lst->nFilmes < 1){
+        AVISO(quickSortFilmes: lista de filmes vazia ou invalida);
         return;
-    
+    }
+    if (lst->nFilmes == 1){
+        printf("Lista de filmes ordenada por nota \n");
+        return;
+    }
+        
     Filme *cab = lst->cab;
     Filme *primeiro = cab->prox;
     Filme *ultimo = cab->ant;
@@ -389,6 +403,8 @@ quickSortFilmes(ListaFilmes *lst)
     primeiro->ant = cab;
     ultimo->prox = cab;
     cab->ant = ultimo;
+
+    printf("Lista de filmes ordenada por nota \n");
 }
 
 static Filme *
