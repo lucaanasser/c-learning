@@ -405,7 +405,7 @@ mostrePioresFilmes(ListaFilmes *lst)
     int N, V, filmesExibidos = 0;
     float X;
 
-    printf("Qual o numero de filmes a serem mostrado:");
+    printf("Qual o numero de filmes a serem mostrado: ");
     scanf(" %d", &N);
 
     printf("Qual a nota minima: ");
