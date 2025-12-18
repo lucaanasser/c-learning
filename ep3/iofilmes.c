@@ -310,7 +310,22 @@ mostreFilme(Filme *flm)
 void 
 mostreListaFilmes(ListaFilmes *lst)
 {
-    AVISO(mostreListaFilmes:  Vixe ainda nao fiz essa funcao...);
+    if (lst == NULL) {
+        AVISO(mostreListaFilmes: lista de filmes vazia);
+        return;
+    }
+
+    Filme *cab = lst->cab;
+    Filme *atual = cab->prox;
+    int filmesExibidos = 0;
+
+    while (atual != cab) {
+        mostreFilme(atual);
+        filmesExibidos++;
+        atual = atual->prox;
+    }
+
+    printf("mostreListaFilmes: %d (de %d) filme(s) exibido(s)\n", filmesExibidos, lst->nFilmes);
 }
 
 /*----------------------------------------------------------------------
