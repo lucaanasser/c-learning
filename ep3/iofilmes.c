@@ -347,7 +347,35 @@ mostreListaFilmes(ListaFilmes *lst)
 void 
 mostreMelhoresFilmes(ListaFilmes *lst)
 {
-    AVISO(mostreMelhores:  Vixe ainda nao fiz essa funcao...);
+    if (lst == NULL) {
+        AVISO(mostreMelhores: lista de filmes vazia);
+        return;
+    }
+
+    int N, V, filmesExibidos = 0;
+    float X;
+
+    printf("Qual o numero de filmes a serem mostrado:");
+    scanf(" %d", &N);
+
+    printf("Qual a nota maxima: ");
+    scanf(" %f", &X);
+
+    printf("Qual o numero minimo de votos: ");
+    scanf(" %d", &V);
+
+    Filme *cab = lst->cab;
+    Filme *atual = cab->prox;
+
+    while (atual!= cab && filmesExibidos < N) {
+        if (atual-> nota < X && atual->votos >= V) {
+            mostreFilme(atual);
+            filmesExibidos++;
+        }
+        atual = atual->prox;
+    }
+
+    printf("Esses sao os %d melhores filmes com nota menor que %.1f e pelo menos %d votos.\n", filmesExibidos, X, V);
 }
 
 /*----------------------------------------------------------------------
@@ -369,5 +397,33 @@ mostreMelhoresFilmes(ListaFilmes *lst)
 void 
 mostrePioresFilmes(ListaFilmes *lst)
 {
-    AVISO(mostrePiores:  Vixe ainda nao fiz essa funcao...);
+    if (lst == NULL) {
+        AVISO(mostrePiores: lista de filmes vazia);
+        return;
+    }
+
+    int N, V, filmesExibidos = 0;
+    float X;
+
+    printf("Qual o numero de filmes a serem mostrado:");
+    scanf(" %d", &N);
+
+    printf("Qual a nota minima: ");
+    scanf(" %f", &X);
+
+    printf("Qual o numero minimo de votos: ");
+    scanf(" %d", &V);
+
+    Filme *cab = lst->cab;
+    Filme *atual = cab->prox; 
+
+    while (atual != cab && filmesExibidos < N) {
+        if (atual->nota > X && atual->votos >= V) {
+            mostreFilme(atual);
+            filmesExibidos++;
+        }
+        atual = atual->prox;
+    }
+
+    printf("Esses sao os %d piores filmes com nota maior que %.1f e pelo menos %d votos.\n", filmesExibidos, X, V);
 }

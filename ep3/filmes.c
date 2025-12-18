@@ -134,7 +134,10 @@ libereFilme(Filme *flm)
 void 
 insiraFilme(ListaFilmes *lst, Filme *flm)
 {
-    if (lst == NULL || flm == NULL) return;
+    if (lst == NULL || flm == NULL) {
+        AVISO(insiraFilme: lista de filmes e/ou o filme vazio);
+        return;
+    } 
 
     Filme *cab = lst->cab;
     Filme *ultimo = cab->ant;
@@ -172,8 +175,11 @@ insiraFilme(ListaFilmes *lst, Filme *flm)
 Bool 
 contemFilme(ListaFilmes *lst, Filme *flm)
 {
-    if (lst == NULL || flm == NULL) return FALSE;
- 
+    if (lst == NULL || flm == NULL) {
+        AVISO(contemFilme: lista de filmes e/ou o filme vazio); 
+        return FALSE;
+    }
+
     Filme *cab = lst->cab;
     Filme *atual = cab->prox;
 
@@ -199,7 +205,10 @@ contemFilme(ListaFilmes *lst, Filme *flm)
 void 
 removaFilme(ListaFilmes *lst, Filme *flm)
 {
-    if (lst == NULL || flm == NULL) return;
+    if (lst == NULL || flm == NULL) {
+        AVISO(removaFilme: lista de filmes e/ou o filme vazio);
+        return;
+    }
 
     flm->ant->prox = flm->prox;
     flm->prox->ant = flm->ant;
