@@ -249,12 +249,101 @@ removaFilme(ListaFilmes *lst, Filme *flm)
  *  ------------------------------------------------------------------
  *  Como a ordenação é por nome, veja a funcao strCmp em util.[h|c].
  */
+
 void 
 mergeSortFilmes(ListaFilmes *lst)
 {
-    AVISO(mergeSortFilmes em filmes.c:  Vixe ainda nao fiz essa funcao...);
+    if (lst == NULL || lst->cab == NULL || lst->nFilmes <= 1)
+        return;
+    
+    Filme *cab = lst->cab;
+    Filme *ultimo;
+    
+    Filme *primeiro = mergeSortR(cab->prox, lst->nFilmes, &ultimo);
+    
+    cab->prox = primeiro;
+    primeiro->ant = cab;
+    ultimo->prox = cab;
+    cab->ant = ultimo;
 }
 
+static Filme *
+mergeSortR(Filme *inicio, int n, Filme **ultimo)
+{
+    if (n == 1) {
+        inicio->prox = NULL;
+        inicio->ant = NULL;
+        *ultimo = inicio;
+        return inicio;
+    }
+    
+    int nEsq = n / 2;
+    int nDir = n - nEsq;
+    
+    Filme *meio = inicio;
+    for (int i = 0; i < nEsq; i++)
+        meio = meio->prox;
+    
+    Filme *ultimoEsq, *ultimoDir;
+    Filme *esq = mergeSortR(inicio, nEsq, &ultimoEsq);
+    Filme *dir = mergeSortR(meio, nDir, &ultimoDir);
+    
+    return merge(esq, nEsq, dir, nDir, ultimo);
+}
+
+static Filme *
+merge(Filme *esq, int nEsq, Filme *dir, int nDir, Filme **ultimo)
+{
+    Filme cabeca; 
+    Filme *tail = &cabeca;
+    int i = 0, j = 0;
+    
+    while (i < nEsq && j < nDir) {
+        if (strCmp(esq->nome, dir->nome) <= 0) {
+            tail->prox = esq;
+            esq->ant = tail;
+
+            tail = esq;
+            
+            esq = esq->prox;
+            i++;
+        } else {
+            tail->prox = dir;
+            dir->ant = tail;
+
+            tail = dir;
+            dir = dir->prox;
+
+            j++;
+        }
+    }
+    
+    while (i < nEsq) {
+        tail->prox = esq;
+        esq->ant = tail;
+
+        tail = esq;
+        esq = esq->prox;
+        
+        i++;
+    }
+    
+    while (j < nDir) {
+        tail->prox = dir;
+        dir->ant = tail;
+
+        tail = dir;
+        dir = dir->prox;
+        
+        j++;
+    }
+    
+    tail->prox = NULL;
+    *ultimo = tail;
+    
+    cabeca.prox->ant = NULL;
+    return cabeca.prox;
+}
 
 /*----------------------------------------------------------------------
  *  quickSortFilmes
@@ -278,10 +367,120 @@ mergeSortFilmes(ListaFilmes *lst)
  *  conta como n variaveis e nao vale).
  *
  */
+
 void 
 quickSortFilmes(ListaFilmes *lst)
 {
-    AVISO(quickSortFilmes em filmes.c: Vixe ainda nao fiz essa funcao...);
+    if (lst == NULL || lst->cab == NULL || lst->nFilmes <= 1)
+        return;
+    
+    Filme *cab = lst->cab;
+    Filme *primeiro = cab->prox;
+    Filme *ultimo = cab->ant;
+    
+    primeiro->ant = NULL;
+    ultimo->prox = NULL;
+    
+    primeiro = quickSortR(primeiro, ultimo);
+    
+    ultimo = getTail(primeiro);
+    
+    cab->prox = primeiro;
+    primeiro->ant = cab;
+    ultimo->prox = cab;
+    cab->ant = ultimo;
+}
+
+static Filme *
+getTail(Filme *node)
+{
+    while (node != NULL && node->prox != NULL){
+        node = node->prox;
+    }
+
+    return node;
+}
+
+static Filme *
+particione(Filme *inicio, Filme *fim, Filme **novoInicio, Filme **novoFim)
+{
+    Filme *pivo = fim;
+    Filme *atual = inicio;
+    Filme *tail = pivo;
+    Filme *prev = NULL;
+    
+    *novoInicio = NULL;
+    
+    while (atual != pivo) {
+        Filme *prox = atual->prox;
+        
+        if (atual->nota < pivo->nota) {
+            if (*novoInicio == NULL)
+                *novoInicio = atual;
+            
+            prev = atual;
+            atual = prox;
+        } else {
+            if (prev != NULL)
+                prev->prox = prox;
+            if (prox != NULL)
+                prox->ant = prev;
+            
+            atual->prox = tail->prox;
+            if (tail->prox != NULL)
+                tail->prox->ant = atual;
+            tail->prox = atual;
+            atual->ant = tail;
+            tail = atual;
+            
+            atual = prox;
+        }
+    }
+    
+    if (*novoInicio == NULL)
+        *novoInicio = pivo;
+    
+    *novoFim = tail;
+    
+    Filme *temp = *novoInicio;
+    temp->ant = NULL;
+    while (temp->prox != NULL) {
+        temp->prox->ant = temp;
+        temp = temp->prox;
+    }
+    
+    return pivo;
+}
+
+static Filme *
+quickSortR(Filme *inicio, Filme *fim)
+{
+    if (inicio == NULL || inicio == fim)
+        return inicio;
+    
+    Filme *novoInicio = NULL;
+    Filme *novoFim = NULL;
+    
+    Filme *pivo = particione(inicio, fim, &novoInicio, &novoFim);
+    
+    if (novoInicio != pivo) {
+        Filme *temp = novoInicio;
+        while (temp->prox != pivo)
+            temp = temp->prox;
+        temp->prox = NULL;
+        
+        novoInicio = quickSortR(novoInicio, temp);
+        
+        temp = getTail(novoInicio);
+        temp->prox = pivo;
+        pivo->ant = temp;
+    }
+    
+    pivo->prox = quickSortR(pivo->prox, novoFim);
+    if (pivo->prox != NULL)
+        pivo->prox->ant = pivo;
+    
+    return novoInicio;
 }
 
 /*----------------------------------------------------------------------

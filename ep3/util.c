@@ -36,7 +36,7 @@ Bool
 achePalavra(unsigned char *pal, int tPal, unsigned char *texto, int tTex)
 {
     if (pal == NULL || texto == NULL || tPal <= 0 || tTex <= 0) {
-        AVISO(achePalavra: os parametros usados estaao vazios ou invalidos);
+        AVISO(achePalavra: os parametros usados estao vazios ou invalidos);
         return FALSE;
     }
 
