@@ -1,3 +1,10 @@
+// Note que em todas minhas funcoes tive que declarar as variaveis
+// no inicio do bloco, pois o C90 gera um warning caso voce declare
+// variaveis misturadas com codigo. Alem disso, todo o loop for tambem
+// nao pode receber declarações dentro dele, como "for (int i = 0; ...", em C90.
+// Assim, para manter a compatibilidade com C90, fiz essas alterações.
+
+
 /*----------------------------------------------------------*/
 /* filmes.h e a interface para as funcoes neste modulo      */
 #include "filmes.h" 
@@ -28,23 +35,23 @@
 Filme *
 crieFilme (char dist[], int votos, float nota, char *nome, int ano)
 {
-    Filme *flm;
     int    len = strlen(nome) + 1; /* +1 para o '\0' */
-    
+    Filme *flm;
+
     flm = malloc(sizeof *flm);
-    
+
     strncpy(flm->dist, dist, TAM_DIST+1); /* +1 para o '\0' */
-    
+
     flm->votos = votos;
     flm->nota  = nota;
-    
+
     flm->nome = malloc(len*sizeof(char));
     strncpy(flm->nome, nome, len);
-    
+
     flm->ano  = ano;
 
     flm->prox = flm->ant = NULL; /* paranoia */
-    
+
     return flm;
 }
 
@@ -60,10 +67,13 @@ crieFilme (char dist[], int votos, float nota, char *nome, int ano)
 ListaFilmes *
 crieListaFilmes()
 {
-    ListaFilmes *nova_lista = malloc(sizeof(ListaFilmes)); 
+    ListaFilmes *nova_lista;
+    Filme *cab;
+
+    nova_lista = malloc(sizeof(ListaFilmes)); 
     if(nova_lista == NULL) return NULL;
-    
-    Filme *cab = malloc(sizeof(Filme));
+
+    cab = malloc(sizeof(Filme));
     if(cab == NULL) {
         free(nova_lista);
         return NULL;
@@ -88,11 +98,14 @@ crieListaFilmes()
 void
 libereListaFilmes(ListaFilmes *lst)
 {
-    if(lst == NULL) return;
-    
-    Filme *cab = lst->cab;
-    Filme *atual = cab->prox;
+    Filme *cab;
+    Filme *atual;
     Filme *prox;
+
+    if(lst == NULL) return;
+
+    cab = lst->cab;
+    atual = cab->prox;
 
     while (atual != cab) {
         prox = atual->prox;
@@ -134,13 +147,16 @@ libereFilme(Filme *flm)
 void 
 insiraFilme(ListaFilmes *lst, Filme *flm)
 {
+    Filme *cab;
+    Filme *ultimo;
+
     if (lst == NULL || flm == NULL) {
         AVISO(insiraFilme: lista de filmes e/ou o filme vazio);
         return;
     } 
 
-    Filme *cab = lst->cab;
-    Filme *ultimo = cab->ant;
+    cab = lst->cab;
+    ultimo = cab->ant;
 
     flm->prox = cab; 
     flm->ant = ultimo;
@@ -175,13 +191,16 @@ insiraFilme(ListaFilmes *lst, Filme *flm)
 Bool 
 contemFilme(ListaFilmes *lst, Filme *flm)
 {
+    Filme *cab;
+    Filme *atual;
+
     if (lst == NULL || flm == NULL) {
         AVISO(contemFilme: lista de filmes e/ou o filme vazio); 
         return FALSE;
     }
 
-    Filme *cab = lst->cab;
-    Filme *atual = cab->prox;
+    cab = lst->cab;
+    atual = cab->prox;
 
     while (atual != cab) {
         if (strCmp(atual->nome, flm->nome) == 0 && atual->nota == flm->nota && atual->ano == flm->ano) {
@@ -250,62 +269,16 @@ removaFilme(ListaFilmes *lst, Filme *flm)
  *  Como a ordenação é por nome, veja a funcao strCmp em util.[h|c].
  */
 
-void 
-mergeSortFilmes(ListaFilmes *lst)
-{
-    if (lst == NULL || lst->cab == NULL || lst->nFilmes < 1) {
-        AVISO(mergeSortFilmes: lista de filmes vazia ou invalida);
-        return;
-    }
-    if (lst->nFilmes == 1){
-        printf("Lista de filmes ordenada por nome \n");
-        return;
-    }
-        
-    Filme *cab = lst->cab;
-    Filme *ultimo;
-    
-    Filme *primeiro = mergeSortR(cab->prox, lst->nFilmes, &ultimo);
-    
-    cab->prox = primeiro;
-    primeiro->ant = cab;
-    ultimo->prox = cab;
-    cab->ant = ultimo;
-
-    printf("Lista de filmes ordenada por nome \n");
-}
-
-static Filme *
-mergeSortR(Filme *inicio, int n, Filme **ultimo)
-{
-    if (n == 1) {
-        inicio->prox = NULL;
-        inicio->ant = NULL;
-        *ultimo = inicio;
-        return inicio;
-    }
-    
-    int nEsq = n / 2;
-    int nDir = n - nEsq;
-    
-    Filme *meio = inicio;
-    for (int i = 0; i < nEsq; i++)
-        meio = meio->prox;
-    
-    Filme *ultimoEsq, *ultimoDir;
-    Filme *esq = mergeSortR(inicio, nEsq, &ultimoEsq);
-    Filme *dir = mergeSortR(meio, nDir, &ultimoDir);
-    
-    return merge(esq, nEsq, dir, nDir, ultimo);
-}
-
 static Filme *
 merge(Filme *esq, int nEsq, Filme *dir, int nDir, Filme **ultimo)
 {
-    Filme cabeca; 
-    Filme *tail = &cabeca;
-    int i = 0, j = 0;
-    
+    Filme cabeca;
+    Filme *tail;
+    int i, j;
+    tail = &cabeca;
+    i = 0;
+    j = 0;
+
     while (i < nEsq && j < nDir) {
         if (strCmp(esq->nome, dir->nome) <= 0) {
             tail->prox = esq;
@@ -353,6 +326,62 @@ merge(Filme *esq, int nEsq, Filme *dir, int nDir, Filme **ultimo)
     return cabeca.prox;
 }
 
+static Filme *
+mergeSortR(Filme *inicio, int n, Filme **ultimo)
+{
+    int nEsq, nDir, i;
+    Filme *meio;
+    Filme *ultimoEsq, *ultimoDir;
+    Filme *esq;
+    Filme *dir;
+
+    if (n == 1) {
+        inicio->prox = NULL;
+        inicio->ant = NULL;
+        *ultimo = inicio;
+        return inicio;
+    }
+
+    nEsq = n / 2;
+    nDir = n - nEsq;
+
+    meio = inicio;
+    for (i = 0; i < nEsq; i++)
+        meio = meio->prox;
+
+    esq = mergeSortR(inicio, nEsq, &ultimoEsq);
+    dir = mergeSortR(meio, nDir, &ultimoDir);
+
+    return merge(esq, nEsq, dir, nDir, ultimo);
+}
+
+void 
+mergeSortFilmes(ListaFilmes *lst)
+{
+    Filme *cab;
+    Filme *ultimo;
+    Filme *primeiro;
+
+    if (lst == NULL || lst->cab == NULL || lst->nFilmes < 1) {
+        AVISO(mergeSortFilmes: lista de filmes vazia ou invalida);
+        return;
+    }
+    if (lst->nFilmes == 1){
+        printf("Lista de filmes ordenada por nome \n");
+        return;
+    }
+
+    cab = lst->cab;
+    primeiro = mergeSortR(cab->prox, lst->nFilmes, &ultimo);
+
+    cab->prox = primeiro;
+    primeiro->ant = cab;
+    ultimo->prox = cab;
+    cab->ant = ultimo;
+
+    printf("Lista de filmes ordenada por nome \n");
+}
+
 /*----------------------------------------------------------------------
  *  quickSortFilmes
  *
@@ -376,37 +405,6 @@ merge(Filme *esq, int nEsq, Filme *dir, int nDir, Filme **ultimo)
  *
  */
 
-void 
-quickSortFilmes(ListaFilmes *lst)
-{
-    if (lst == NULL || lst->cab == NULL || lst->nFilmes < 1){
-        AVISO(quickSortFilmes: lista de filmes vazia ou invalida);
-        return;
-    }
-    if (lst->nFilmes == 1){
-        printf("Lista de filmes ordenada por nota \n");
-        return;
-    }
-        
-    Filme *cab = lst->cab;
-    Filme *primeiro = cab->prox;
-    Filme *ultimo = cab->ant;
-    
-    primeiro->ant = NULL;
-    ultimo->prox = NULL;
-    
-    primeiro = quickSortR(primeiro, ultimo);
-    
-    ultimo = getTail(primeiro);
-    
-    cab->prox = primeiro;
-    primeiro->ant = cab;
-    ultimo->prox = cab;
-    cab->ant = ultimo;
-
-    printf("Lista de filmes ordenada por nota \n");
-}
-
 static Filme *
 getTail(Filme *node)
 {
@@ -420,20 +418,26 @@ getTail(Filme *node)
 static Filme *
 particione(Filme *inicio, Filme *fim, Filme **novoInicio, Filme **novoFim)
 {
-    Filme *pivo = fim;
-    Filme *atual = inicio;
-    Filme *tail = pivo;
-    Filme *prev = NULL;
-    
+    Filme *pivo;
+    Filme *atual;
+    Filme *tail;
+    Filme *prev;
+    Filme *prox;
+    Filme *temp;
+    pivo = fim;
+    atual = inicio;
+    tail = pivo;
+    prev = NULL;
+
     *novoInicio = NULL;
-    
+
     while (atual != pivo) {
-        Filme *prox = atual->prox;
-        
+        prox = atual->prox;
+
         if (atual->nota < pivo->nota) {
             if (*novoInicio == NULL)
                 *novoInicio = atual;
-            
+
             prev = atual;
             atual = prox;
         } else {
@@ -441,62 +445,99 @@ particione(Filme *inicio, Filme *fim, Filme **novoInicio, Filme **novoFim)
                 prev->prox = prox;
             if (prox != NULL)
                 prox->ant = prev;
-            
+
             atual->prox = tail->prox;
             if (tail->prox != NULL)
                 tail->prox->ant = atual;
             tail->prox = atual;
             atual->ant = tail;
             tail = atual;
-            
+
             atual = prox;
         }
     }
-    
+
     if (*novoInicio == NULL)
         *novoInicio = pivo;
-    
+
     *novoFim = tail;
-    
-    Filme *temp = *novoInicio;
+
+    temp = *novoInicio;
     temp->ant = NULL;
     while (temp->prox != NULL) {
         temp->prox->ant = temp;
         temp = temp->prox;
     }
-    
+
     return pivo;
 }
 
 static Filme *
 quickSortR(Filme *inicio, Filme *fim)
 {
-    if (inicio == NULL || inicio == fim)
-        return inicio;
-    
     Filme *novoInicio = NULL;
     Filme *novoFim = NULL;
-    
-    Filme *pivo = particione(inicio, fim, &novoInicio, &novoFim);
-    
+    Filme *pivo;
+    Filme *temp;
+
+    if (inicio == NULL || inicio == fim)
+        return inicio;
+
+    pivo = particione(inicio, fim, &novoInicio, &novoFim);
+
     if (novoInicio != pivo) {
-        Filme *temp = novoInicio;
+        temp = novoInicio;
         while (temp->prox != pivo)
             temp = temp->prox;
         temp->prox = NULL;
-        
+
         novoInicio = quickSortR(novoInicio, temp);
-        
+
         temp = getTail(novoInicio);
         temp->prox = pivo;
         pivo->ant = temp;
     }
-    
+
     pivo->prox = quickSortR(pivo->prox, novoFim);
     if (pivo->prox != NULL)
         pivo->prox->ant = pivo;
-    
+
     return novoInicio;
+}
+
+void 
+quickSortFilmes(ListaFilmes *lst)
+{
+    Filme *cab;
+    Filme *primeiro;
+    Filme *ultimo;
+
+    if (lst == NULL || lst->cab == NULL || lst->nFilmes < 1){
+        AVISO(quickSortFilmes: lista de filmes vazia ou invalida);
+        return;
+    }
+    if (lst->nFilmes == 1){
+        printf("Lista de filmes ordenada por nota \n");
+        return;
+    }
+
+    cab = lst->cab;
+    primeiro = cab->prox;
+    ultimo = cab->ant;
+
+    primeiro->ant = NULL;
+    ultimo->prox = NULL;
+
+    primeiro = quickSortR(primeiro, ultimo);
+
+    ultimo = getTail(primeiro);
+
+    cab->prox = primeiro;
+    primeiro->ant = cab;
+    ultimo->prox = cab;
+    cab->ant = ultimo;
+
+    printf("Lista de filmes ordenada por nota \n");
 }
 
 /*----------------------------------------------------------------------

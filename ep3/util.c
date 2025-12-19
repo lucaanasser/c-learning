@@ -35,24 +35,25 @@
 Bool
 achePalavra(unsigned char *pal, int tPal, unsigned char *texto, int tTex)
 {
+    int CharErrado[256];
+    int i, j;
+    
     if (pal == NULL || texto == NULL || tPal <= 0 || tTex <= 0) {
         AVISO(achePalavra: os parametros usados estao vazios ou invalidos);
         return FALSE;
     }
 
-    int CharErrado[256];
-
-    for (int i = 0; i < 256; i++) {
+    for (i = 0; i < 256; i++) {
         CharErrado[i] = tPal;
     }
 
-    for (int i = 0; i < tPal - 1; i++) {
-        CharErrado [tolower(pal[i])] = tPal - 1 - i;
+    for (i = 0; i < tPal - 1; i++) {
+        CharErrado[tolower(pal[i])] = tPal - 1 - i;
     }
 
-    int i = 0;
+    i = 0;
     while (i <= tTex - tPal) {
-        int j = tPal - 1;
+        j = tPal - 1;
         while (j >= 0 && tolower(texto[i + j]) == tolower(pal[j])) {
             j--;
         }
