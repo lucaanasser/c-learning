@@ -82,6 +82,7 @@ crieListaFilmes()
     cab->prox = cab;
     cab->ant = cab;
     nova_lista->cab = cab;
+    nova_lista->nFilmes = 0;
 
     return nova_lista;
 }
@@ -367,7 +368,6 @@ mergeSortFilmes(ListaFilmes *lst)
         return;
     }
     if (lst->nFilmes == 1){
-        printf("Lista de filmes ordenada por nome \n");
         return;
     }
 
@@ -378,8 +378,6 @@ mergeSortFilmes(ListaFilmes *lst)
     primeiro->ant = cab;
     ultimo->prox = cab;
     cab->ant = ultimo;
-
-    printf("Lista de filmes ordenada por nome \n");
 }
 
 /*----------------------------------------------------------------------
@@ -517,7 +515,6 @@ quickSortFilmes(ListaFilmes *lst)
         return;
     }
     if (lst->nFilmes == 1){
-        printf("Lista de filmes ordenada por nota \n");
         return;
     }
 
@@ -536,8 +533,6 @@ quickSortFilmes(ListaFilmes *lst)
     primeiro->ant = cab;
     ultimo->prox = cab;
     cab->ant = ultimo;
-
-    printf("Lista de filmes ordenada por nota \n");
 }
 
 /*----------------------------------------------------------------------
