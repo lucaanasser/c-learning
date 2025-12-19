@@ -28,7 +28,7 @@ main(int argc, char *argv[])
     char         opcao;
     /* declaracao das demais variaveis do main */
 
-
+    initST();
     
     /*-----------------------------------------------------*/
     /* iterara ate o usuario digitar 'x' para sair         */
@@ -57,30 +57,76 @@ main(int argc, char *argv[])
         /*---------------------------------------------*/
         case PROCURAR:
         {
+            char nome[TAM_STR];
+            Filme *cab;
+            Filme *atual;
+            Bool encontrado;
+
+            printf("Digite o nome do filme: ");
+            leiaString(nome, TAM_STR);
+
+            cab = lst->cab;
+            atual = cab->prox;
+            encontrado = FALSE;
+
+            while (atual != cab) {
+                if (strCmp(atual->nome, nome) == 0) {
+                    mostreFilme(atual);
+                    encontrado = TRUE;
+                }
+                atual = atual->prox;
+            }
+
+            if (!encontrado) {
+                printf("Filme '%s' nao encontrado.\n", nome);
+            }
             break;
         }
 
         /*---------------------------------------------*/
         case HASH: /* opcional */
         {
+            hashFilmes(lst);
             break;
         }
 
         /*---------------------------------------------*/
         case PROCURAR_HASH: /* opcional */
         {
+            char palavra[TAM_STR];
+            ListaPtrFilmes *listaPtr;
+            ListaPtrFilmes *atual;
+
+            printf("Digite uma palavra do nome do filme: ");
+            leiaString(palavra, TAM_STR);
+
+            listaPtr = getFilmeST(palavra);
+
+            if (listaPtr == NULL) {
+                printf("Nenhum filme encontrado com a palavra '%s'.\n", palavra);
+            } else {
+                atual = listaPtr;
+                while (atual != NULL) {
+                    mostreFilme(atual->ptrFlm);
+                    atual = atual->proxPtr;
+                }
+            }
             break;
         }
 
         /*---------------------------------------------*/
         case MOSTRAR_HASH: /* opcional */
         {
+            showST();
             break;
         }
 
         /*---------------------------------------------*/
         case LIMPAR_HASH: /* opcional */
         {
+            freeST();
+            initST();
+            printf("Tabela de simbolos limpa.\n");
             break;
         }
 
@@ -113,7 +159,8 @@ main(int argc, char *argv[])
             flm = crieFilme(dist, votos, nota, nome, ano);
             mostreFilme(flm);
             
-            /* COMPLETAR ESSA OPERAÇÃO */
+            insiraFilme(lst, flm);
+            printf("Filme inserido com sucesso.\n");
 
             break;
         }
@@ -121,42 +168,77 @@ main(int argc, char *argv[])
         /*---------------------------------------------*/
         case REMOVER:
         {
+            char nome[TAM_STR];
+            Filme *cab;
+            Filme *atual;
+            Bool encontrado;
+
+            printf("Digite o nome do filme: ");
+            leiaString(nome, TAM_STR);
+
+            cab = lst->cab;
+            atual = cab->prox;
+            encontrado = FALSE;
+
+            while (atual != cab) {
+                if (strCmp(atual->nome, nome) == 0) {
+                    removaFilme(lst, atual);
+                    printf("Filme '%s' removido.\n", nome);
+                    encontrado = TRUE;
+                    break;
+                }
+                atual = atual->prox;
+            }
+
+            if (!encontrado) {
+                printf("Filme '%s' nao encontrado.\n", nome);
+            }
             break;
         }
 
         /*---------------------------------------------*/
         case ORDENAR_NOME_M:
         {
+            mergeSortFilmes(lst);
+            printf("Lista ordenada por nome (mergeSort).\n");
             break;
         }
 
         /*---------------------------------------------*/
         case ORDENAR_NOTA_Q: 
         {
+            quickSortFilmes(lst);
+            printf("Lista ordenada por nota (quickSort).\n");
             break;
         }
 
         /*---------------------------------------------*/
         case MOSTRAR:
         {
+            mostreListaFilmes(lst);
             break;
         }
 
         /*---------------------------------------------*/
         case MOSTRAR_MENOR:
         {
+            mostrePioresFilmes(lst);
             break;
         }
 
         /*---------------------------------------------*/
         case MOSTRAR_MAIOR:
         {
+            mostreMelhoresFilmes(lst);
             break;
         }
       
         /*---------------------------------------------*/
         case LIMPAR:
         {
+            libereListaFilmes(lst);
+            lst = crieListaFilmes();
+            printf("Lista de filmes limpa.\n");
             break;
         }
 

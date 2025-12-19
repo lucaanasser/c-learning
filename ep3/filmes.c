@@ -1,8 +1,8 @@
-// Note que em todas minhas funcoes tive que declarar as variaveis
-// no inicio do bloco, pois o C90 gera um warning caso voce declare
-// variaveis misturadas com codigo. Alem disso, todo o loop for tambem
-// nao pode receber declarações dentro dele, como "for (int i = 0; ...", em C90.
-// Assim, para manter a compatibilidade com C90, fiz essas alterações.
+/* Note que em todas minhas funcoes tive que declarar as variaveis
+ no inicio do bloco, pois o C90 gera um warning caso voce declare
+ variaveis misturadas com codigo. Alem disso, todo o loop for tambem
+ nao pode receber declarações dentro dele, como "for (int i = 0; ...", em C90.
+ Assim, para manter a compatibilidade com C90, fiz essas alterações. */
 
 
 /*----------------------------------------------------------*/
