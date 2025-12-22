@@ -31,6 +31,7 @@
 #include "filmes.h"  /* Filmes */
 #include "util.h"    /* Bool, String, strCmp(), mallocSafe() */
 #include <ctype.h>   /* tolower() */
+#include <time.h>    /* time() */
 
 
 /*-----------------------------------------------------------*/
@@ -40,10 +41,16 @@
  * para este EP talvez o tamanho da tabela pudesse ser
  * menor, 65521 talvez seja um exagero...  
  *
- * No EP M eh uma constante, mas podia ser uma variavel.
+/* No EP M eh uma constante, mas podia ser uma variavel.
  */ 
 #define M 65521
+#define P 65537
 
+
+/*-----------------------------------------------------------*/
+/* variaveis para funcao hash aleatoria */
+static int a = 1;
+static int b = 0;
 
 /*-----------------------------------------------------------*/
 /* funcao que calcula o codigo de dispersao (hash code) de   
@@ -100,8 +107,20 @@ static int nChaves = 0;
 static int
 hash(String palavra)
 {
-    return 0;
-    AVISO(hash em st.c: Vixe! Ainda nao fiz essa funcao ...);
+    int i;
+    int len;
+    int h;
+    
+    if (palavra == NULL) return 0;
+    
+    len = strlen(palavra);
+    h = 0;
+    
+    for (i = 0; i < len; i++) {
+        h = (a * h + tolower(palavra[i])) % P;
+    }
+    
+    return h % M;
 }
 
 /*-----------------------------------------------------------*/
@@ -114,7 +133,17 @@ hash(String palavra)
 void
 initST()
 {
-    AVISO(initST em st.c: Vixe! Ainda nao fiz essa funcao ...);
+    int i;
+    
+    for (i = 0; i < M; i++) {
+        hashHead[i] = NULL;
+    }
+    
+    nChaves = 0;
+    
+    srand(time(NULL));
+    a = (rand() % (P - 1)) + 1;
+    b = rand() % P;
 }
 
 /*-----------------------------------------------------------*/
@@ -151,7 +180,41 @@ initST()
 void
 putFilmeST(String palavra, Filme *flm)
 {
-    AVISO(putFilmeST em st.c: Vixe! Ainda nao fiz essa funcao ...);
+    int h;
+    int len;
+    CelST *p;
+    ListaPtrFilmes *novoPtr;
+    
+    if (palavra == NULL || flm == NULL) return;
+    
+    h = hash(palavra);
+    p = hashHead[h];
+    
+    while (p != NULL) {
+        if (strCmp(p->palavra, palavra) == 0) {
+            novoPtr = malloc(sizeof(ListaPtrFilmes));
+            novoPtr->ptrFlm = flm;
+            novoPtr->proxPtr = p->iniListaPtr;
+            p->iniListaPtr = novoPtr;
+            return;
+        }
+        p = p->proxST;
+    }
+    
+    p = malloc(sizeof(CelST));
+    len = strlen(palavra) + 1;
+    p->palavra = malloc(len * sizeof(char));
+    strcpy(p->palavra, palavra);
+    
+    novoPtr = malloc(sizeof(ListaPtrFilmes));
+    novoPtr->ptrFlm = flm;
+    novoPtr->proxPtr = NULL;
+    p->iniListaPtr = novoPtr;
+    
+    p->proxST = hashHead[h];
+    hashHead[h] = p;
+    
+    nChaves++;
 }
 
 /*-----------------------------------------------------------*/
@@ -178,7 +241,21 @@ putFilmeST(String palavra, Filme *flm)
 ListaPtrFilmes *
 getFilmeST(String palavra)
 {
-    AVISO(getFilmeST em st.c: Vixe! Ainda nao fiz essa funcao ...);
+    int h;
+    CelST *p;
+    
+    if (palavra == NULL) return NULL;
+    
+    h = hash(palavra);
+    p = hashHead[h];
+    
+    while (p != NULL) {
+        if (strCmp(p->palavra, palavra) == 0) {
+            return p->iniListaPtr;
+        }
+        p = p->proxST;
+    }
+    
     return NULL;
 }
 
@@ -226,7 +303,18 @@ getFilmeST(String palavra)
 void
 showST()
 {
-    AVISO(showST em st.c: Vixe! Ainda nao fiz essa funcao ...);
+    int i;
+    CelST *p;
+    
+    printf("Tabela de simbolos: { codigo: lista de chaves }\n");
+    
+    for (i = 0; i < M; i++) {
+        p = hashHead[i];
+        while (p != NULL) {
+            printf("{ %6d: '%s' }\n", i, p->palavra);
+            p = p->proxST;
+        }
+    }
 }
 
 /*-----------------------------------------------------------*/
@@ -239,6 +327,30 @@ showST()
 void
 freeST()
 {
-    AVISO(freeST em st.c: Vixe! Ainda nao fiz essa funcao ...);
+    int i;
+    CelST *p;
+    CelST *proxCel;
+    ListaPtrFilmes *ptr;
+    ListaPtrFilmes *proxPtr;
+    
+    for (i = 0; i < M; i++) {
+        p = hashHead[i];
+        while (p != NULL) {
+            ptr = p->iniListaPtr;
+            while (ptr != NULL) {
+                proxPtr = ptr->proxPtr;
+                free(ptr);
+                ptr = proxPtr;
+            }
+            
+            free(p->palavra);
+            proxCel = p->proxST;
+            free(p);
+            p = proxCel;
+        }
+        hashHead[i] = NULL;
+    }
+    
+    nChaves = 0;
 }
 
