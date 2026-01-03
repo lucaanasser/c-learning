@@ -94,22 +94,31 @@ main(int argc, char *argv[])
         case PROCURAR_HASH: /* opcional */
         {
             char palavra[TAM_STR];
+            char resposta;
             ListaPtrFilmes *listaPtr;
             ListaPtrFilmes *atual;
 
-            printf("Digite uma palavra do nome do filme: ");
+            listaPtr = getFilmeST("");
+            if (listaPtr == NULL) {
+                break;
+            }
+
+            printf("Digite um parte do nome do filme a ser procurado: ");
             leiaString(palavra, TAM_STR);
 
             listaPtr = getFilmeST(palavra);
 
-            if (listaPtr == NULL) {
-                printf("Nenhum filme encontrado com a palavra '%s'.\n", palavra);
-            } else {
-                atual = listaPtr;
-                while (atual != NULL) {
-                    mostreFilme(atual->ptrFlm);
-                    atual = atual->proxPtr;
+            atual = listaPtr;
+            while (atual != NULL) {
+                mostreFilme(atual->ptrFlm);
+                printf(" Esse eh o filme procurado? [s/n/x] (x para sair): ");
+                scanf(" %c", &resposta);
+                
+                if (resposta == 's' || resposta == 'S' || resposta == 'x' || resposta == 'X') {
+                    break;
                 }
+                
+                atual = atual->proxPtr;
             }
             break;
         }
@@ -199,16 +208,24 @@ main(int argc, char *argv[])
         /*---------------------------------------------*/
         case ORDENAR_NOME_M:
         {
-            mergeSortFilmes(lst);
-            printf("Lista ordenada por nome (mergeSort).\n");
+            if (lst == NULL || lst->cab == NULL || lst->nFilmes < 1) {
+                printf("AVISO: mergeSortFilmes: lista de filmes vazia ou invalida\n");
+            } else {
+                mergeSortFilmes(lst);
+                printf("Lista ordenada por nome (mergeSort).\n");
+            }
             break;
         }
 
         /*---------------------------------------------*/
         case ORDENAR_NOTA_Q: 
         {
-            quickSortFilmes(lst);
-            printf("Lista ordenada por nota (quickSort).\n");
+            if (lst == NULL || lst->cab == NULL || lst->nFilmes < 1) {
+                printf("AVISO: quickSortFilmes: lista de filmes vazia ou invalida\n");
+            } else {
+                quickSortFilmes(lst);
+                printf("Lista ordenada por nota (quickSort).\n");
+            }
             break;
         }
 

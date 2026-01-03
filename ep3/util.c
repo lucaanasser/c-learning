@@ -166,9 +166,6 @@ leiaString(char str[], int size)
     }
     strncpy(str, s, size);
 
-#ifdef DEBUG
-    printf("AVISO: leiaString: string lido '%s' tem %d caracteres\n", s, len);
-#endif
     return len;
 }
 

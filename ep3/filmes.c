@@ -563,5 +563,51 @@ quickSortFilmes(ListaFilmes *lst)
 void
 hashFilmes(ListaFilmes *lst)
 {
-    AVISO(hashFilmes em filmes.c: Vixe ainda nao fiz essa funcao...);
+    Filme *cab;
+    Filme *atual;
+    char *nome_copia;
+    char *palavra;
+    int len;
+    
+    if (lst == NULL) {
+        AVISO(hashFilmes: lista de filmes vazia);
+        return;
+    }
+    
+    if (lst->cab == NULL) {
+        AVISO(hashFilmes: cabeca da lista e NULL);
+        return;
+    }
+    
+    freeST();
+    initST();
+    
+    cab = lst->cab;
+    atual = cab->prox;
+    
+    while (atual != cab) {
+        if (atual->nome == NULL) {
+            atual = atual->prox;
+            continue;
+        }
+        
+        len = strlen(atual->nome) + 1;
+        nome_copia = malloc(len * sizeof(char));
+        if (nome_copia == NULL) {
+            AVISO(hashFilmes: erro ao alocar memoria);
+            return;
+        }
+        strcpy(nome_copia, atual->nome);
+        
+        palavra = strtok(nome_copia, " \t\n.,;:!?\"'()[]{}/-");
+        while (palavra != NULL) {
+            putFilmeST(palavra, atual);
+            palavra = strtok(NULL, " \t\n.,;:!?\"'()[]{}/-");
+        }
+        
+        free(nome_copia);
+        atual = atual->prox;
+    }
+    
+    AVISO(hashFilmes: tabela de dispersao (hash) criada);
 }

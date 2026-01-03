@@ -48,9 +48,8 @@
 
 
 /*-----------------------------------------------------------*/
-/* variaveis para funcao hash aleatoria */
-static int a = 1;
-static int b = 0;
+static int a;
+static int b;
 
 /*-----------------------------------------------------------*/
 /* funcao que calcula o codigo de dispersao (hash code) de   
@@ -244,6 +243,11 @@ getFilmeST(String palavra)
     int h;
     CelST *p;
     
+    if (nChaves == 0) {
+        AVISO(TS esta vazia);
+        return NULL;
+    }
+    
     if (palavra == NULL) return NULL;
     
     h = hash(palavra);
@@ -304,15 +308,32 @@ void
 showST()
 {
     int i;
+    int count = 0;
+    char resposta;
     CelST *p;
     
+    if (nChaves == 0) {
+        AVISO(hashFilmes: TS esta vazia);
+        return;
+    }
+    
+    printf(" . . . . . . . . . . . . . . . . . . . . . . .\n");
     printf("Tabela de simbolos: { codigo: lista de chaves }\n");
     
     for (i = 0; i < M; i++) {
         p = hashHead[i];
         while (p != NULL) {
-            printf("{ %6d: '%s' }\n", i, p->palavra);
+            printf(" { %6d: '%s' }\n", i, p->palavra);
+            count++;
             p = p->proxST;
+            
+            if (count % 10 == 0) {
+                printf(" Continuar? [s/n]: ");
+                scanf(" %c", &resposta);
+                if (resposta != 's' && resposta != 'S') {
+                    return;
+                }
+            }
         }
     }
 }

@@ -310,14 +310,18 @@ mostreFilme(Filme *flm)
 void 
 mostreListaFilmes(ListaFilmes *lst)
 {
+    Filme *cab;
+    Filme *atual;
+    int filmesExibidos;
+    
     if (lst == NULL) {
         AVISO(mostreListaFilmes: lista de filmes vazia);
         return;
     }
 
-    Filme *cab = lst->cab;
-    Filme *atual = cab->prox;
-    int filmesExibidos = 0;
+    cab = lst->cab;
+    atual = cab->prox;
+    filmesExibidos = 0;
 
     while (atual != cab) {
         mostreFilme(atual);
@@ -347,13 +351,17 @@ mostreListaFilmes(ListaFilmes *lst)
 void 
 mostreMelhoresFilmes(ListaFilmes *lst)
 {
+    int N, V, filmesExibidos;
+    float X;
+    Filme *cab;
+    Filme *atual;
+    
     if (lst == NULL) {
         AVISO(mostreMelhores: lista de filmes vazia);
         return;
     }
 
-    int N, V, filmesExibidos = 0;
-    float X;
+    filmesExibidos = 0;
 
     printf("Qual o numero de filmes a serem mostrado:");
     scanf(" %d", &N);
@@ -364,8 +372,8 @@ mostreMelhoresFilmes(ListaFilmes *lst)
     printf("Qual o numero minimo de votos: ");
     scanf(" %d", &V);
 
-    Filme *cab = lst->cab;
-    Filme *atual = cab->prox;
+    cab = lst->cab;
+    atual = cab->prox;
 
     while (atual!= cab && filmesExibidos < N) {
         if (atual-> nota < X && atual->votos >= V) {
@@ -397,13 +405,17 @@ mostreMelhoresFilmes(ListaFilmes *lst)
 void 
 mostrePioresFilmes(ListaFilmes *lst)
 {
+    int N, V, filmesExibidos;
+    float X;
+    Filme *cab;
+    Filme *atual;
+    
     if (lst == NULL) {
         AVISO(mostrePiores: lista de filmes vazia);
         return;
     }
 
-    int N, V, filmesExibidos = 0;
-    float X;
+    filmesExibidos = 0;
 
     printf("Qual o numero de filmes a serem mostrado: ");
     scanf(" %d", &N);
@@ -414,8 +426,8 @@ mostrePioresFilmes(ListaFilmes *lst)
     printf("Qual o numero minimo de votos: ");
     scanf(" %d", &V);
 
-    Filme *cab = lst->cab;
-    Filme *atual = cab->prox; 
+    cab = lst->cab;
+    atual = cab->prox; 
 
     while (atual != cab && filmesExibidos < N) {
         if (atual->nota > X && atual->votos >= V) {
